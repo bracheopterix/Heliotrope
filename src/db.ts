@@ -3,10 +3,10 @@ import { Client } from "pg";
 
 export const DB = new Client({
     connectionString: process.env.DATABASE_URL,
-    ssl: {
-        rejectUnauthorized: false
-    }
+    ssl: false,
 })
+// db should not be a constant
+
 
   export async function connectDB(): Promise<void> {
     await DB.connect();

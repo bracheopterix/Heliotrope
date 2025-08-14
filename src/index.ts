@@ -23,48 +23,35 @@ app.listen(process.env.PORT, () => { // I am listening on env.PORT port all of i
 
 
 /// Checking Database working
-async function checkDb():Promise<boolean> {
-    try {
-        await connectDB();
-        console.log("Database connected"); /// I DON"T GET IT IN THE CONSOLE! !!! SIMPLIFY AND GO FOR!!!
-        await disconnectDB();
-        return true;
-    } catch (err) { () => { return err } };
-    return false;
-}
 
-async function waitForDb(n: number) {
-    return new Promise((resolve) => setTimeout(() => {
-        return "Database is yet not connected, timeout of 1000ms exeeded";
-    }, n));
 
-}
+DB.connect().then(() => DB.end()).catch((error) => console.log(error));
 
-async function raceDbCheck() {
-    return Promise.race([
-        checkDb(),
-        waitForDb(1000),
-    ])
-}
 ////
 
 
 app.get('/', (req, res) => {
-    // let dbCheck = {};
-    // raceDbCheck().then(answer=>dbCheck = JSON.stringify(answer));
-    // const dbCheck = JSON.stringify(raceDbCheck());
-
-    checkDb().then((answer)=>console.log("DB is on",answer));
 
     try {
         res.send(JSON.stringify('Helios vivit'));
-        // res.send(JSON.stringify("Helios vivit" + dbCheck));
-
     } catch (error) {
         res.status(500).json({ error: "Failed to get an initial response" });
     }
 
+})
 
+app.get('check_database', async (req, res) => {
+    try {
+        DB.connect().then(() => DB.end()).catch((error) => {
+            console.log(error);
+            res.send(JSON.stringify(error));
+            res.send(JSON.stringify(error));
+
+        });
+
+    } catch (error) {
+        res.send(JSON.stringify(error));
+    }
 })
 
 
