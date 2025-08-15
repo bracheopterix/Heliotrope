@@ -1,7 +1,8 @@
 import express from "express";
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { DB, connectDB, disconnectDB } from './db'
+import { DB } from './db'
+import { error } from "console";
 
 // import { error } from "console";
 
@@ -19,72 +20,50 @@ app.listen(process.env.PORT, () => { // I am listening on env.PORT port all of i
 })
 
 
-/// SIMPLE ROUTES ///
-
-
-/// Checking Database working
-
-
-DB.connect().then(() => DB.end()).catch((error) => console.log(error));
-
-////
+/// CHECKS ///
 
 
 app.get('/', (req, res) => {
 
     try {
         res.send(JSON.stringify('Helios vivit'));
-    } catch (error) {
-        res.status(500).json({ error: "Failed to get an initial response" });
+    }
+    catch (error) {
+        res.status(500).json({ error: "Initial server response failed" });
     }
 
 })
 
-app.get('check_database', async (req, res) => {
+
+app.get('/database/check', async (req, res) => {
+
+    const db = DB(); // creating a DB Client 
     try {
-        DB.connect().then(() => DB.end()).catch((error) => {
-            console.log(error);
-            res.send(JSON.stringify(error));
-            res.send(JSON.stringify(error));
-
-        });
-
-    } catch (error) {
-        res.send(JSON.stringify(error));
+        await db.connect();
+        res.send(JSON.stringify("Database connection succeeded"));
+        console.log("Database connection established")
+        await db.end();
+    }
+    catch (error) {
+        () => res.send(JSON.stringify(`Database connection failed: ${error}`));
     }
 })
 
 
-app.post('/', (req, res) => {
-
-    try {
-        res.send("Editing right is denied");
-    } catch (error) {
-        res.status(500).json({ error: "Failed to get a standart post response" });
-    }
-
-})
-
-
+/// API ///
 
 app.get('/api/notes', (req, res) => {
 
     try {
-
         const NewDataArray = Array(0);
-
         for (let i = 0; i < 999; i++) {
             NewDataArray.push(`New data ${i.toString()}`);
         }
-
         res.send(JSON.stringify(NewDataArray));
-    } catch (error) {
+    }
+    catch (error) {
         res.status(500).json({ error: "Failed to get test note object" });
     }
-
-
-
-
 
 })
 
