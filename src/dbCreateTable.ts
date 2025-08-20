@@ -1,4 +1,4 @@
-// To create a new object and then just reuse the function of creating a table on that object.
+// To create a new table object and then just reuse the function of creating a table on that object.
 import dotenv from 'dotenv';
 import { DB } from './db'
 
@@ -6,7 +6,7 @@ dotenv.config(); // This is super- important to have process.env
 
 ///
 
-type TableType = { // remember that id is always created at the query creating step
+export type TableType = { // remember that id is always created at the query creating step
     tableName: string,
     [key: string]: string,
 }
@@ -19,7 +19,7 @@ const notes: TableType = {
 
 
 
-function createTableQuery(table: TableType): string {
+export function createTableQuery(table: TableType): string {
     let tableCreateQuery: string = `CREATE TABLE IF NOT EXISTS ${table.tableName} (id SERIAL PRIMARY KEY`;
 
     for (const [key, value] of Object.entries(table)) {
@@ -32,7 +32,7 @@ function createTableQuery(table: TableType): string {
     return tableCreateQuery;
 }
 
-
+/// TEST ///
 function createTableQueryTest() {
     const testTable1: TableType = {
         tableName: `notes`,
