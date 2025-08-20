@@ -4,8 +4,11 @@ import { Client, } from "pg";
 
 export const DB = () => new Client({
     connectionString: process.env.DATABASE_URL,
-    ssl: true,
+    ssl: { 
+        rejectUnauthorized: false 
+    },
 })
+
 // db should not be a constant
 // cause you are creating it when calling the first time on import 
 // even before you have a "process" to call process.env 

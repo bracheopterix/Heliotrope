@@ -1,5 +1,5 @@
 # Node + TypeScript + Express + Jest
-
+`npx ts-node ./src/index.ts`
 ## *Is it a server?*
 - still doesn't use express.router, all routes are in index.
 - Pool thing from pg for establishing autoclosing connections with database is also yeeted
