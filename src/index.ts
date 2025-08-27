@@ -1,8 +1,11 @@
 import express from "express";
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { DB, getBdTableNames } from './db'
+import { DB } from './db'
+import { getBdTableNames, TableType } from './dbControls'
 import { error } from "console";
+
+import { NoteType } from "./types";
 
 const app = express(); // starting out serv
 
@@ -53,7 +56,7 @@ app.get('/database/tables', async (req, res) => {
     // const db = DB();
 
     const result = await getBdTableNames();
-    console.log(result);
+    // console.log(result);
 
     try {
         res.send(JSON.stringify(result));
@@ -72,6 +75,7 @@ app.get('/database/tables', async (req, res) => {
 
 /// API ///
 
+
 app.get('/api/notes', (req, res) => {
 
     try {
@@ -85,5 +89,38 @@ app.get('/api/notes', (req, res) => {
         res.status(500).json({ error: "Failed to get test note object" });
     }
 
+})
+
+
+const testData = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+
+function* getNextPortionOfData(data: NoteType[] | undefined, slice: number) {
+    //^Hello, I am a generator!
+    let i = 0;
+    if (data) {
+        while (i < data.length) {
+            yield data.slice(i, i + slice);
+            i += slice;
+        }
+        return `Array's gone`;
+    }
+    else {
+        return "Can't yield, data undefined";
+    }
+
+}
+
+const newSlice = getNextPortionOfData(testData, 4).next();
+/// let the client decide whats part it wants from the server
+
+
+app.get('/api/notes/slice', (req, res) => {
+    try {
+        console.log(`got a request ${req}`)
+        console.log(`newSlice = ${newSlice}`);
+        res.send(JSON.stringify(newSlice.value)); // returns {value, done]
+    } catch (error) {
+        res.status(500).json({ error: "Failed to get a data slice" });
+    }
 })
 

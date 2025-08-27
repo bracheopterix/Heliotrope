@@ -16,32 +16,34 @@ export const DB = () => new Client({
 
 
 
-export async function getBdTableNames() { // resulting in all names of db tables
+// export async function getBdTableNames() { // resulting in all names of db tables
 
-    // const result = 0;
-    const db = DB();
+//     // const result = 0;
+//     const db = DB();
 
-    try {
-        await db.connect();
-        const queryResult = await db.query(`
-            SELECT table_name 
-            FROM information_schema.tables
-            WHERE table_schema = 'public'
-            AND table_type = 'BASE TABLE'
-            `);
+//     try {
+//         await db.connect();
+//         const queryResult = await db.query(`
+//             SELECT table_name 
+//             FROM information_schema.tables
+//             WHERE table_schema = 'public'
+//             AND table_type = 'BASE TABLE'
+//             `);
 
-        const tableNames = queryResult.rows.map(row => row.table_name);
-        return tableNames;
-    }
-    catch (error) {
-        throw new Error(`Failed to get all table names from BD: ${error}`)
-    }
-    finally {
-        await db.end();
-    }
-}
+//         const tableNames = queryResult.rows.map(row => row.table_name);
+//         return tableNames;
+//     }
+//     catch (error) {
+//         throw new Error(`Failed to get all table names from BD: ${error}`)
+//     }
+//     finally {
+//         await db.end();
+//     }
+// }
 
+// async function getTableColumns(){ 
 
+// }
 
 
 /// POOL? ///
