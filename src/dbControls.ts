@@ -64,7 +64,6 @@ function createTableQueryTest() {
         return false;
     }
 
-
 }
 
 // createTableQueryTest();
@@ -104,7 +103,33 @@ async function createTable(table: TableType) {
 
 // createTable(notes,); 
 
+/// FULL YOU TABLE ///
 
+async function fullMyTableToTheRim(table: string) {
+
+    const db = DB();
+    try {
+        await db.connect();
+
+        for (let i = 0; i < 100; i++) {
+            const time = new Date();
+            const timeStamp = time.getTime();
+            const newData = { created_at: time, text: `${i} ${timeStamp}` }
+            const result = await db.query(`
+                INSERT INTO notes (text,created_at) 
+                VALUES ($1, $2) RETURNING *;
+                `, [newData.text,newData.created_at])
+                
+                console.log(`Inserted row id: ${result.rows[0].id} created_at: ${result.rows[0].created_at}, text: ${result.rows[0].text}`);
+        }
+    }
+    catch (error) {
+        console.log(`Elements creation failed, ${error}`);
+    } finally {
+        await db.end();
+    }
+}
+// fullMyTableToTheRim("notes");
 
 
 
@@ -186,7 +211,7 @@ async function getAllTableData(table: string) {
 }
 
 
-function TableDataToTableTypeObj(table: string, tableData: QueryResult):TableType {
+function TableDataToTableTypeObj(table: string, tableData: QueryResult): TableType {
 
 
     const fields: JsObj[] = tableData.fields.map(f => ({ "name": f.name, "format": f.format })); // additional () to indicate that this is an object literal and not a functinal block!
@@ -196,7 +221,7 @@ function TableDataToTableTypeObj(table: string, tableData: QueryResult):TableTyp
         tableName: table,
     }
 
-    for (let el of fields){
+    for (let el of fields) {
 
 
 
@@ -204,7 +229,7 @@ function TableDataToTableTypeObj(table: string, tableData: QueryResult):TableTyp
 
     console.log(tableData)
 
-    
+
 
     return newTableObj;
 
@@ -277,24 +302,24 @@ async function DbTransplant() {
 
 //COPY notes TO STDOUT WITH CSV HEADER;
 
-async function shortWay(){
-    const db=DB();
-    
+async function shortWay() {
+    const db = DB();
+
     const query = ` ;`
 
-    try{
+    try {
         await db.connect();
         const result = await db.query(query);
         console.log(result);
-    }catch(error){
+    } catch (error) {
         console.log(`Short way failed: ${error}`);
     }
-    finally{
+    finally {
         await db.end();
     }
 }
 
-shortWay();
+// shortWay();
 
 // Lets one Postgres server query tables on another Postgres server directly, almost like a linked table:
 // SELECT * FROM foreign_server.notes;

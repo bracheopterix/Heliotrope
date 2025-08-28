@@ -114,13 +114,33 @@ const newSlice = getNextPortionOfData(testData, 4).next();
 /// let the client decide whats part it wants from the server
 
 
-app.get('/api/notes/slice', (req, res) => {
+app.get('/api/notes/slice', async (req, res) => {
+    const db = DB();
+
+    const page = Number(req.query.page);
+    const slice_size = Number(req.query.slice_size);
+
+    const offset = page * slice_size;
+    console.log(`page=${page},slice_size=${slice_size},offset=${offset}`);
+
+
     try {
-        console.log(`got a request ${req}`)
-        console.log(`newSlice = ${newSlice}`);
-        res.send(JSON.stringify(newSlice.value)); // returns {value, done]
+        // console.log(`got a request ${req.query}`);
+
+        await db.connect();
+        const result = await db.query(`
+            SELECT * FROM notes
+            ORDER BY created_at DESC
+            LIMIT $1 OFFSET $2;
+            `,[slice_size,offset]);
+
+        res.send(res.json(result.rows)); // returns {value, done]
     } catch (error) {
-        res.status(500).json({ error: "Failed to get a data slice" });
+        res.status(500).json({ error: `Failed to get a data slice, ${error}`});
+    } finally {
+        await db.end()
     }
 })
+
+
 

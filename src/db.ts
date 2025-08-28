@@ -4,9 +4,9 @@ import { Client, } from "pg";
 
 export const DB = () => new Client({
     connectionString: process.env.DATABASE_URL,
-    ssl: { 
-        rejectUnauthorized: false 
-    },
+    ssl: {
+        rejectUnauthorized: false, // отключает проверку сертификата (для Render/Heroku/дев-среды) only for home play
+      },
 })
 
 // db should not be a constant
