@@ -92,7 +92,7 @@ app.get('/api/notes', (req, res) => {
 })
 
 
-const testData = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+// const testData = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
 
 function* getNextPortionOfData(data: NoteType[] | undefined, slice: number) {
     //^Hello, I am a generator!
@@ -110,7 +110,7 @@ function* getNextPortionOfData(data: NoteType[] | undefined, slice: number) {
 
 }
 
-const newSlice = getNextPortionOfData(testData, 4).next();
+// const newSlice = getNextPortionOfData(testData, 4).next();
 /// let the client decide whats part it wants from the server
 
 
@@ -121,7 +121,6 @@ app.get('/api/notes/slice', async (req, res) => {
     const slice_size = Number(req.query.slice_size);
 
     const offset = page * slice_size;
-    console.log(`page=${page},slice_size=${slice_size},offset=${offset}`);
 
 
     try {
@@ -130,16 +129,23 @@ app.get('/api/notes/slice', async (req, res) => {
         await db.connect();
         const result = await db.query(`
             SELECT * FROM notes
-            ORDER BY created_at DESC
+            ORDER BY id DESC
             LIMIT $1 OFFSET $2;
             `,[slice_size,offset]);
 
-        res.send(res.json(result.rows)); // returns {value, done]
+            // console.log(`result:`, result)
+            // console.log(`result.rows: `,result.rows);
+            console.log("slice:", slice_size, "offset:", offset);
+            console.log(result.rows.map(r=>r.id));
+
+        res.json(result.rows); 
+        // res.send(JSON.stringify(result.rows))
     } catch (error) {
         res.status(500).json({ error: `Failed to get a data slice, ${error}`});
     } finally {
-        await db.end()
+        await db.end();
     }
+
 })
 
 

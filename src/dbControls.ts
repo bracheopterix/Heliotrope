@@ -111,7 +111,7 @@ async function fullMyTableToTheRim(table: string) {
     try {
         await db.connect();
 
-        for (let i = 0; i < 100; i++) {
+        for (let i = 1; i < 101; i++) {
             const time = new Date();
             const timeStamp = time.getTime();
             const newData = { created_at: time, text: `${i} ${timeStamp}` }
